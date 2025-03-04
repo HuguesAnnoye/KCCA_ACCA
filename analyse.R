@@ -1,5 +1,7 @@
 library(tidyverse)
 library(dplyr)
+library(xtable)
+library(BEAMM.KCCAACCA)
 
 # Load Result
 # source("try_article_ACCA_4.R)
@@ -12,13 +14,13 @@ compute_results <- function(match, actual, names.NCV, names.ZC = NULL, wt = NULL
   for (name in names.NCV) {
     if (is.factor(match[,name])) {
       errors <- match[,name] != actual[,name]
-      tmp <- c(name, "wMCR", BEAMM.statMatch:::wtd_mean_rcpp(errors, wt))
+      tmp <- c(name, "wMCR", BEAMM.KCCAACCA:::wtd_mean_rcpp(errors, wt))
     } else {
-      var_ACTUAL <- BEAMM.statMatch:::wtd_var_rcpp(actual[,name], wt)
+      var_ACTUAL <- BEAMM.KCCAACCA:::wtd_var_rcpp(actual[,name], wt)
       if (var_ACTUAL == 0) var_ACTUAL <- 1
       errors <- match[,name] - actual[,name]
-      tmp <- c(name, "wsMAE", BEAMM.statMatch:::wtd_mean_rcpp(abs(errors), wt)/sqrt(var_ACTUAL))
-      tmp <- rbind(tmp, c(name, "RwsMSE", sqrt(BEAMM.statMatch:::wtd_mean_rcpp(errors^2, wt)/var_ACTUAL)))
+      tmp <- c(name, "wsMAE", BEAMM.KCCAACCA:::wtd_mean_rcpp(abs(errors), wt)/sqrt(var_ACTUAL))
+      tmp <- rbind(tmp, c(name, "RwsMSE", sqrt(BEAMM.KCCAACCA:::wtd_mean_rcpp(errors^2, wt)/var_ACTUAL)))
     }
     results <- rbind(results, tmp)
   }
@@ -27,27 +29,27 @@ compute_results <- function(match, actual, names.NCV, names.ZC = NULL, wt = NULL
       tmp_ZC <- match[,paste0("ZC_", name)] == 1
       tmp_true0 <- actual[,name] == 0
       errors <- tmp_ZC != tmp_true0
-      tmp <- c(paste0("ZC_", name), "MCR", BEAMM.statMatch:::wtd_mean_rcpp(errors, wt))
+      tmp <- c(paste0("ZC_", name), "MCR", BEAMM.KCCAACCA:::wtd_mean_rcpp(errors, wt))
       results <- rbind(results, tmp)
     }
   }
   if (length(names.NCV.cont) > 0) {
-    results <- rbind(results, c("Total (cont.)", "RwsMSE", BEAMM.statMatch:::compute_obj_function(
-      BEAMM.statMatch:::df2mtx(actual[, names.NCV.cont]), BEAMM.statMatch:::df2mtx(match[, names.NCV.cont]), wt)
+    results <- rbind(results, c("Total (cont.)", "RwsMSE", BEAMM.KCCAACCA:::compute_obj_function(
+      BEAMM.KCCAACCA:::df2mtx(actual[, names.NCV.cont]), BEAMM.KCCAACCA:::df2mtx(match[, names.NCV.cont]), wt)
     ))
   }
   if (length(names.NCV.cat) > 0) {
-    results <- rbind(results, c("Total (cat.)", "RwsMSE", BEAMM.statMatch:::compute_obj_function(
-      BEAMM.statMatch:::df2mtx(actual[, names.NCV.cat]), BEAMM.statMatch:::df2mtx(match[, names.NCV.cat]), wt)
+    results <- rbind(results, c("Total (cat.)", "RwsMSE", BEAMM.KCCAACCA:::compute_obj_function(
+      BEAMM.KCCAACCA:::df2mtx(actual[, names.NCV.cat]), BEAMM.KCCAACCA:::df2mtx(match[, names.NCV.cat]), wt)
     ))
   }
-  results <- rbind(results, c("Total", "RwsMSE", BEAMM.statMatch:::compute_obj_function(
-    BEAMM.statMatch:::df2mtx(actual[, names.NCV]), BEAMM.statMatch:::df2mtx(match[, names.NCV]), wt)
+  results <- rbind(results, c("Total", "RwsMSE", BEAMM.KCCAACCA:::compute_obj_function(
+    BEAMM.KCCAACCA:::df2mtx(actual[, names.NCV]), BEAMM.KCCAACCA:::df2mtx(match[, names.NCV]), wt)
   ))
   results <- rbind(results, c("Total", "Multivariate R^2 (Cohen, 2013)",
-                              BEAMM.statMatch::compute_multi_Rsquare(match, actual, names.NCV, wt,type = "book")))
+                              BEAMM.KCCAACCA::compute_multi_Rsquare(match, actual, names.NCV, wt,type = "book")))
   results <- rbind(results, c("Total", "Multivariate R^2 (Jones, 2019)",
-                              BEAMM.statMatch::compute_multi_Rsquare(match, actual, names.NCV, wt,type = "R")))
+                              BEAMM.KCCAACCA::compute_multi_Rsquare(match, actual, names.NCV, wt,type = "R")))
   results <- as.data.frame(results)
   rownames(results) <- NULL
   names(results) <- c("variable", "error", "value")
@@ -62,6 +64,5 @@ load("~/resultat/25_novembre_2024/KCCA/Essais_KCCA_4.RDATA")
 result_KCCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y2))
 
 res_fin <- cbind(result_KCCA[,1:2],KCCA=result_KCCA$value, ACCA=result_ACCA_ter$value)
-library(xtable)
 xtable(res_fin)
 save(res_fin, file="~/resultat/25_novembre_2024/Res/res_fin_4.RDATA")

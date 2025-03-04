@@ -1,6 +1,6 @@
 #Packages 
 library(MASS)
-library(BEAMM.statMatch)
+library(BEAMM.KCCAACCA)
 
 #Create training set
 set.seed(43)
