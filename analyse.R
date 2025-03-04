@@ -1,3 +1,4 @@
+#Packages 
 library(tidyverse)
 library(dplyr)
 library(xtable)
@@ -6,6 +7,8 @@ library(BEAMM.KCCAACCA)
 # Load Result
 # source("try_article_ACCA_4.R)
 load("~/resultat/25_novembre_2024/ACCA/Essais_ACCA_4.RDATA")
+
+#Analyse function
 compute_results <- function(match, actual, names.NCV, names.ZC = NULL, wt = NULL) {
   if (is.null(wt)) wt <- rep(1,nrow(actual))
   names.NCV.cat <- names.NCV[unlist(lapply(actual %>% dplyr::select(all_of(names.NCV)), is.factor))]
@@ -57,12 +60,19 @@ compute_results <- function(match, actual, names.NCV, names.ZC = NULL, wt = NULL
   return(results)
 }
 
+# Values for ACCA
 result_ACCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y2))
 
+
+# Load results for KCCA
 # source("try_article_KCCA_4.R)
 load("~/resultat/25_novembre_2024/KCCA/Essais_KCCA_4.RDATA")
+
+# Values for KCCA
 result_KCCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y2))
 
+
+# Final results
 res_fin <- cbind(result_KCCA[,1:2],KCCA=result_KCCA$value, ACCA=result_ACCA_ter$value)
 xtable(res_fin)
 save(res_fin, file="~/resultat/25_novembre_2024/Res/res_fin_4.RDATA")
