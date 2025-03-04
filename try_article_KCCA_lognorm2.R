@@ -3,9 +3,10 @@ library(MASS)
 library(BEAMM.KCCAACCA)
 
 #Create training set
-set.seed(43)
+set.seed(46)
+Y11 <- rlnorm(1000,0,1)
 X11 <- rnorm(1000,0,1)
-X12 <- rnorm(1000,4,10)
+X12 <- rnorm(1000,0,1) + Y11
 X13 <- 4*X12 +  2 *X11 + rnorm(1000,0,1)
 X14 <- rnorm(1000,0,10)
 sig <- rbind(c(1,0.5,0.5),c(0.5,1,0.5),c(0.5,0.5,1))
@@ -14,18 +15,20 @@ X15 <- mvrnorm(1000,mu=c(0,1,2),Sigma=sig)
 X <- cbind(X11,X12,X13,X14,X15)
 colnames(X) <- paste0("CV_",1:7)
 
-Y11 <- rnorm(1000,0,1)
-Y12 <- rnorm(1000,4,10) - Y11
-Y13 <- 3*X12 + 4 *Y11 + rnorm(1000,0,1)
-Y14 <- 5*X13 + 2*X14 + Y11  + rnorm(1000,0,1)
+
+Y12 <- rnorm(1000,0,1) - log(Y11+1)
+Y13 <- 3*X12 + 4 *log(Y11+1) + rnorm(1000,0,1)
+Y14 <- 5*X13 + 2*X14 + log(Y11+1)  + rnorm(1000,0,1)
 Y15 <- 5*X12 + 2*X11 + Y12 + rnorm(1000,0,1)
 Y16 <- 5*X11 + 2*X13 + Y13
+Y17 <- 3*X15[,1] + 2*X14 + log(Y11+1) + rnorm(1000,0,1)
 Y <- cbind(Y11,Y13,Y14,Y15,Y16)
 colnames(Y) <- paste0("NCV_",1:5)
 
 #Create test set
+Y21 <- rlnorm(1000,0,1)
 X21 <- rnorm(1000,0,1)
-X22 <- rnorm(1000,4,10)
+X22 <- rnorm(1000,0,1) + Y21
 X24 <- rnorm(1000,0,10)
 sig <- rbind(c(1,0.5,0.5),c(0.5,1,0.5),c(0.5,0.5,1))
 X25 <- mvrnorm(1000,mu=c(0,1,2),Sigma=sig)
@@ -33,12 +36,12 @@ X23 <- 4*X22 +  2 *X21 + rnorm(1000,0,1)
 X2 <- cbind(X21,X22,X23,X24,X25)
 colnames(X2) <- paste0("CV_",1:7)
 
-Y21 <- rnorm(1000,0,1)
-Y22 <- rnorm(1000,4,10) - Y21
-Y23 <- 3*X22 + 4 *Y21 + rnorm(1000,0,1)
-Y24 <- 5*X23 + 2*X24 + Y21  + rnorm(1000,0,1)
+Y22 <- rnorm(1000,0,1) - log(Y21+1)
+Y23 <- 3*X22 + 4 * log(Y21+1) + rnorm(1000,0,1)
+Y24 <- 5*X23 + 2*X24 + log(Y21+1)  + rnorm(1000,0,1)
 Y25 <- 5*X22 + 2*X21 + Y22 + rnorm(1000,0,1)
 Y26 <- 5*X21 + 2*X23 + Y23
+Y27 <- 3*X25[,1] + 2*X24 + log(Y21+1) + rnorm(1000,0,1)
 Y2 <- cbind(Y21,Y23,Y24,Y25,Y26)
 colnames(Y2) <- paste0("NCV_",1:5)
 
@@ -53,8 +56,8 @@ options_KCCA <-statMatch.KCCA.options(
   names.CV_Cat_prio = NULL,
   n_fold = 5L,
   par = TRUE,
-  par_fold = TRUE,
-  nc = 5L,
+  par_fold = FALSE,
+  nc = 10L,
   d = c(2L,3L,4L),
   rot = FALSE,
   p1_kernel_predict = c("alea", "epan", "gauss"),
@@ -87,7 +90,7 @@ options_KCCA <-statMatch.KCCA.options(
   p2_hxmin = 0.0005,
   p2_hxstep = 0.0002,
   p2_hy = NULL,
-  p2_hymax = 0.0007,
+  p2_hymax = 0.0010,
   p2_hymin = 0.0003,
   p2_hystep = 0.0002,
   p2_g = 2e-05,
@@ -118,4 +121,4 @@ t2 <- Sys.time()
 temps <- t2 - t1
 print(temps)
 #Save Results
-save(list=ls(), file="~/resultat/25_novembre_2024/KCCA/Essais_KCCA_1.RDATA")
+save(list=ls(), file="~/resultat/25_novembre_2024/KCCA/Essais_KCCA_lognorm3.RDATA")

@@ -5,8 +5,8 @@ library(xtable)
 library(BEAMM.KCCAACCA)
 
 # Load Result
-# source("try_article_ACCA_4.R)
-load("~/resultat/25_novembre_2024/ACCA/Essais_ACCA_4.RDATA")
+# source("try_article_ACCA_Beta.R)
+load("~/resultat/25_novembre_2024/ACCA/Essais_ACCA_Beta.RDATA")
 
 #Analyse function
 compute_results <- function(match, actual, names.NCV, names.ZC = NULL, wt = NULL) {
@@ -65,8 +65,8 @@ result_ACCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y
 
 
 # Load results for KCCA
-# source("try_article_KCCA_4.R)
-load("~/resultat/25_novembre_2024/KCCA/Essais_KCCA_4.RDATA")
+# source("try_article_KCCA_Beta.R)
+load("~/resultat/25_novembre_2024/KCCA/Essais_KCCA_Beta.RDATA")
 
 # Values for KCCA
 result_KCCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y2))
@@ -75,4 +75,4 @@ result_KCCA <- compute_results(cbind(df.rec, Y2),res1$final,names.NCV=colnames(Y
 # Final results
 res_fin <- cbind(result_KCCA[,1:2],KCCA=result_KCCA$value, ACCA=result_ACCA_ter$value)
 xtable(res_fin)
-save(res_fin, file="~/resultat/25_novembre_2024/Res/res_fin_4.RDATA")
+save(res_fin, file="~/resultat/25_novembre_2024/Res/res_fin_Beta.RDATA")

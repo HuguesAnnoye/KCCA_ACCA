@@ -116,4 +116,4 @@ temps <- t2 - t1
 print(temps)
 
 #Save Results
-save(list=ls(), file="~/resultat/25_novembre_2024/ACCA/Essais_ACCA_1.RDATA")
+save(list=ls(), file="~/resultat/25_novembre_2024/ACCA/Essais_ACCA_linear.RDATA")

@@ -123,4 +123,4 @@ t2 <- Sys.time()
 temps <- t2 - t1
 print(temps)
 #Save Results
-save(list=ls(), file="~/resultat/25_novembre_2024/KCCA/Essais_KCCA_4.RDATA")
+save(list=ls(), file="~/resultat/25_novembre_2024/KCCA/Essais_KCCA_Beta.RDATA")
